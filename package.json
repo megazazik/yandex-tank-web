@@ -1,0 +1,18 @@
+{
+  "name": "yandex-tank-service",
+  "version": "0.1.0",
+  "description": "Web interface for yandex tank",
+  "main": "dist/server/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "yandex",
+    "tank",
+    "performance",
+    "stress",
+    "test"
+  ],
+  "author": "Mikhail Lebedev <megazazik@gmail.com>",
+  "license": "MIT"
+}
