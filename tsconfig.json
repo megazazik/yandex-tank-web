@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"allowSyntheticDefaultImports": true,
+		"sourceMap": true,
+		"module": "es6",
+		"target": "es5",
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"noImplicitReturns": true,
+		"incremental": true,
+		"tsBuildInfoFile": "./dist/buildInfo",
+		"jsx": "react", 
+		"baseUrl": "./src/",
+		"outDir": "./dist/",
+		"rootDir": "./src/",
+		"paths": {
+			"*": [ "*" ]
+		}
+	},
+	"include": [
+		"./src/**/*"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}

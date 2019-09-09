@@ -4,7 +4,12 @@
   "description": "Web interface for yandex tank",
   "main": "dist/server/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node dist/server/index.js",
+    "start-watch": "concurrently --kill-others \"nodemon --watch dist/ node dist/server/index.js\" \"npm run build-server -- --watch\"",
+    "build": "megazazik-build -c ./config/webpack.config.js",
+    "build-server": "tsc -P tsconfig.server.json",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prod": "cross-env NODE_ENV=production npm run"
   },
   "keywords": [
     "yandex",
@@ -14,5 +19,27 @@
     "test"
   ],
   "author": "Mikhail Lebedev <megazazik@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.5.5",
+    "@hot-loader/react-dom": "^16.9.0",
+    "@megazazik/build": "^0.2.0",
+    "@storybook/react": "^5.1.11",
+    "@types/express": "^4.17.1",
+    "@types/minimist": "^1.2.0",
+    "@types/react": "^16.9.2",
+    "@types/react-dom": "^16.9.0",
+    "babel-loader": "^8.0.6",
+    "concurrently": "^4.1.2",
+    "typescript": "^3.6.2",
+    "webpack-hot-middleware": "^2.25.0"
+  },
+  "dependencies": {
+    "cross-env": "^5.2.1",
+    "encaps": "^0.8.0",
+    "express": "^4.17.1",
+    "minimist": "^1.2.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
 }

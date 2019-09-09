@@ -1,0 +1,11 @@
+{
+	"extends": "./tsconfig",
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es6"
+	},
+	"files": ["./src/server/index.ts"],
+	"include": [
+		"./src/declarations/**/*.ts"
+	]
+}
