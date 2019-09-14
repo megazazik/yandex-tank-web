@@ -4,7 +4,7 @@ import * as path from "path";
 import pargeArgs from "minimist";
 
 const params = pargeArgs(process.argv.slice(2));
-const port = params.port || 8080;
+const port = params.port || 4000;
 const includeCss = params.css || process.env.NODE_ENV === "production";
 
 const app = express();
@@ -14,6 +14,10 @@ app.use(express.static(path.resolve(__dirname, "../../public/")));
 app.get("/", (req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(getHtml({ includeCss }));
+});
+
+app.get("/500", (req, res) => {
+  throw new Error("My test error");
 });
 
 app.use(function(req, res) {
