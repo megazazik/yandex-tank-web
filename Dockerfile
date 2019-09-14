@@ -20,9 +20,3 @@ RUN npm run build
 EXPOSE 4000
 
 ENTRYPOINT ["npm","start"]
-# ENTRYPOINT ["/bin/bash"]
-
-# VOLUME ["/var/loadtest"]
-# WORKDIR /var/loadtest
-# ENTRYPOINT ["/usr/local/bin/yandex-tank"]
-# ENTRYPOINT ["/bin/ping","-c","3"]

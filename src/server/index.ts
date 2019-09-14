@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from "express";
 import getHtml from "./getMarkUp";
 import * as path from "path";
 import pargeArgs from "minimist";
+import startTest from "./tank";
 
 const params = pargeArgs(process.argv.slice(2));
 const port = params.port || 4000;
@@ -14,6 +15,13 @@ app.use(express.static(path.resolve(__dirname, "../../public/")));
 app.get("/", (req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
   res.send(getHtml({ includeCss }));
+});
+
+app.get("/run", (req, res) => {
+  startTest().then(() => {
+    res.setHeader("Content-Type", "text/plain; charset=utf-8");
+    res.send("Test complete!");
+  });
 });
 
 app.get("/500", (req, res) => {

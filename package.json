@@ -1,5 +1,5 @@
 {
-  "name": "yandex-tank-service",
+  "name": "yandex-tank-web",
   "version": "0.1.0",
   "description": "Web interface for yandex tank",
   "main": "dist/server/index.js",
@@ -9,8 +9,8 @@
     "build": "npm run build-client && npm run build-server",
     "build-client": "megazazik-build -c ./config/webpack.config.js",
     "build-server": "tsc -P tsconfig.server.json",
-    "build-docker": "docker build --rm -t yandex-tank-web --build-arg IMAGE=my-tank .",
-    "docker": "docker run -v $(pwd)/tank:/var/loadtest -p 4000:4000 -it yandex-tank-web",
+    "build-image": "docker build --rm -t yandex-tank-web --build-arg IMAGE=my-tank .",
+    "docker": "docker run -v $(pwd)/tank:/var/loadtest -p 5000:4000 -it yandex-tank-web",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prod": "cross-env NODE_ENV=production npm run"
   },
