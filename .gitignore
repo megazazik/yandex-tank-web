@@ -5,3 +5,4 @@ db/data
 tank/logs
 tank/tank_errors.log
 storage
+public/static
