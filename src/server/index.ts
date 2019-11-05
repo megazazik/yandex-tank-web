@@ -1,8 +1,11 @@
 import express, { Request, Response, NextFunction } from "express";
+import { json, urlencoded } from "body-parser";
+import morgan from "morgan";
 import getHtml from "./getMarkUp";
 import * as path from "path";
 import pargeArgs from "minimist";
 import startTest from "./tank";
+import api from "./api";
 
 const params = pargeArgs(process.argv.slice(2));
 const port = params.port || 4000;
@@ -11,6 +14,10 @@ const includeCss = params.css || process.env.NODE_ENV === "production";
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../../public/")));
+
+app.use(morgan("tiny"));
+app.use(urlencoded({ extended: false }));
+app.use(json());
 
 app.get("/", (req, res) => {
   res.setHeader("Content-Type", "text/html; charset=utf-8");
@@ -24,9 +31,7 @@ app.get("/run", (req, res) => {
   });
 });
 
-app.get("/500", (req, res) => {
-  throw new Error("My test error");
-});
+app.use("/api", api({ path: path.resolve(__dirname, "../../storage") }));
 
 app.use(function(req, res) {
   res.status(404).send("Page not found!");

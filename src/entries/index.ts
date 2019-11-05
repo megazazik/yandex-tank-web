@@ -1,1 +1,3 @@
-console.log('It works');
+import runApp from "../app";
+
+document.addEventListener("DOMContentLoaded", runApp);
