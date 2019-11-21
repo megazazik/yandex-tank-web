@@ -4,7 +4,7 @@ import categories from "..";
 import CategoryEditForm from "../../category/view";
 import { reducer, actions } from "./reducer";
 import { bindActionCreators } from "encaps";
-import validate from "../validateCategory";
+import validationScheme from "../validateCategory";
 import CategoryItem from "./category";
 import cn from "classnames";
 import styles from "./styles.less";
@@ -13,7 +13,7 @@ import { ICategory } from "../../category";
 
 export type Props = {
   categories: ReturnType<typeof categories.reducer>;
-  addCategory: (category: {name: string}) => void;
+  addCategory: (category: { name: string }) => void;
   deleteCategory: (id: string) => void;
   editCategory: (category: ICategory) => void;
   onSelectCategory: (category: ICategory) => void;
@@ -28,7 +28,10 @@ export default (props: Props) => {
   );
 
   const onCreateCategory = React.useCallback(() => {
-    const errors = validate(state.category, Object.values(props.categories.items));
+    const errors = validationScheme.validate({
+      category: state.category,
+      categories: Object.values(props.categories.items)
+    });
 
     if (errors) {
       boundAction.setValidation(true);
@@ -51,11 +54,14 @@ export default (props: Props) => {
   }, []);
 
   const selectCategory = useGetEventCallback((uid: string) => () => {
-    boundAction.selectCategory(uid)
-  })
+    boundAction.selectCategory(uid);
+  });
 
   const errors = state.validation
-    ? validate(state.category, Object.values(props.categories.items))
+    ? validationScheme.validate({
+        category: state.category,
+        categories: Object.values(props.categories.items)
+      })
     : null;
 
   const onDeleteCategory = useEventCallback(() => {
@@ -71,18 +77,23 @@ export default (props: Props) => {
   });
 
   const onSelectCategory = useGetEventCallback((id: string) => () => {
-      props.onSelectCategory(props.categories.items[id]);
+    props.onSelectCategory(props.categories.items[id]);
   });
 
   return (
     <>
       <div className="row mb-3">
         <div className="col-12">
-          <h3>Категории{' '}
+          <h3>
+            Категории{" "}
             {props.categories.isProcesssing && (
-            <div className="spinner-border" style={{width: '1.8rem', height: '1.8rem'}} role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
+              <div
+                className="spinner-border"
+                style={{ width: "1.8rem", height: "1.8rem" }}
+                role="status"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
             )}
           </h3>
         </div>
@@ -91,7 +102,11 @@ export default (props: Props) => {
             type="button"
             className="btn btn-success mr-2"
             disabled={!state.selectedCategory}
-            onClick={state.selectedCategory ? onSelectCategory(state.selectedCategory) : undefined}
+            onClick={
+              state.selectedCategory
+                ? onSelectCategory(state.selectedCategory)
+                : undefined
+            }
           >
             Открыть
           </button>
@@ -111,14 +126,13 @@ export default (props: Props) => {
             Изменить
           </button>
           <button
-					  type="button"
+            type="button"
             className="btn btn-secondary"
             onClick={onDeleteCategory}
-					  disabled={!state.selectedCategory}
-				  >
-					  Удалить
+            disabled={!state.selectedCategory}
+          >
+            Удалить
           </button>
-          
         </div>
       </div>
       <div className="row">
@@ -134,7 +148,9 @@ export default (props: Props) => {
                 <CategoryItem
                   key={uid}
                   category={props.categories.items[uid]}
-                  className={cn(styles.row, { ['table-info']: state.selectedCategory === uid })}
+                  className={cn(styles.row, {
+                    ["table-info"]: state.selectedCategory === uid
+                  })}
                   onClick={selectCategory(uid)}
                   onDoubleClick={onSelectCategory(uid)}
                 />
@@ -160,13 +176,13 @@ export default (props: Props) => {
   );
 };
 
-function getErrorName(errors: ReturnType<typeof validate>) {
-  if(errors?.name?.[0]?.type === 'required') {
-    return 'Не заполнено название';
+function getErrorName(errors: ReturnType<typeof validationScheme.validate>) {
+  if (errors?.category?.name?.[0]?.type === "required") {
+    return "Не заполнено название";
   }
 
-  if(errors?.[0].type === 'notUniqueName') {
-    return 'Такое название уже существует'
+  if (errors?.[0].type === "notUniqueName") {
+    return "Такое название уже существует";
   }
 
   return undefined;

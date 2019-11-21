@@ -4,5 +4,5 @@ dist
 db/data
 tank/logs
 tank/tank_errors.log
-storage
+.storage
 public/static

@@ -31,7 +31,12 @@ app.get("/run", (req, res) => {
   });
 });
 
-app.use("/api", api({ path: path.resolve(__dirname, "../../storage") }));
+app.use(
+  "/api",
+  api({
+    path: process.env.STORAGE_PATH || path.resolve(__dirname, "../../.storage")
+  })
+);
 
 app.use(function(req, res) {
   res.status(404).send("Page not found!");

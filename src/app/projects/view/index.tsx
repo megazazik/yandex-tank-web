@@ -4,7 +4,7 @@ import projects from "..";
 import ProjectEditForm from "../../project/view";
 import { reducer, actions } from "./reducer";
 import { bindActionCreators } from "encaps";
-import validate from "../validateProjects";
+import validationScheme from "../validateProjects";
 import ProjectItem from "./project";
 import cn from "classnames";
 import styles from "./styles.less";
@@ -15,7 +15,7 @@ import { ICategory } from "../../category";
 export type Props = {
   category: ICategory;
   projects: ReturnType<typeof projects.reducer>;
-  addProject: (project: {name: string}) => void;
+  addProject: (project: { name: string }) => void;
   deleteProject: (id: string) => void;
   editProject: (project: IProject) => void;
   onSelectProject: (project: IProject) => void;
@@ -31,7 +31,10 @@ export default (props: Props) => {
   );
 
   const onCreateProject = React.useCallback(() => {
-    const errors = validate(state.project, Object.values(props.projects.items));
+    const errors = validationScheme.validate({
+      project: state.project,
+      projects: Object.values(props.projects.items)
+    });
 
     if (errors) {
       boundAction.setValidation(true);
@@ -54,11 +57,14 @@ export default (props: Props) => {
   }, []);
 
   const selectProject = useGetEventCallback((uid: string) => () => {
-    boundAction.selectProject(uid)
-  })
+    boundAction.selectProject(uid);
+  });
 
   const errors = state.validation
-    ? validate(state.project, Object.values(props.projects.items))
+    ? validationScheme.validate({
+        project: state.project,
+        projects: Object.values(props.projects.items)
+      })
     : null;
 
   const onDeleteProject = useEventCallback(() => {
@@ -74,18 +80,23 @@ export default (props: Props) => {
   });
 
   const onSelectProject = useGetEventCallback((id: string) => () => {
-      props.onSelectProject(props.projects.items[id]);
+    props.onSelectProject(props.projects.items[id]);
   });
 
   return (
     <>
       <div className="row mb-3">
         <div className="col-12">
-          <h3>{props.category.name} - Проекты{' '}
+          <h3>
+            {props.category.name} - Проекты{" "}
             {props.projects.isProcesssing && (
-            <div className="spinner-border" style={{width: '1.8rem', height: '1.8rem'}} role="status">
-              <span className="sr-only">Loading...</span>
-            </div>
+              <div
+                className="spinner-border"
+                style={{ width: "1.8rem", height: "1.8rem" }}
+                role="status"
+              >
+                <span className="sr-only">Loading...</span>
+              </div>
             )}
           </h3>
         </div>
@@ -101,7 +112,11 @@ export default (props: Props) => {
             type="button"
             className="btn btn-success mr-2"
             disabled={!state.selectedProject}
-            onClick={state.selectedProject ? onSelectProject(state.selectedProject) : undefined}
+            onClick={
+              state.selectedProject
+                ? onSelectProject(state.selectedProject)
+                : undefined
+            }
           >
             Открыть
           </button>
@@ -121,14 +136,13 @@ export default (props: Props) => {
             Изменить
           </button>
           <button
-					  type="button"
+            type="button"
             className="btn btn-secondary"
             onClick={onDeleteProject}
-					  disabled={!state.selectedProject}
-				  >
-					  Удалить
+            disabled={!state.selectedProject}
+          >
+            Удалить
           </button>
-          
         </div>
       </div>
       <div className="row">
@@ -144,7 +158,9 @@ export default (props: Props) => {
                 <ProjectItem
                   key={uid}
                   project={props.projects.items[uid]}
-                  className={cn(styles.row, { ['table-info']: state.selectedProject === uid })}
+                  className={cn(styles.row, {
+                    ["table-info"]: state.selectedProject === uid
+                  })}
                   onClick={selectProject(uid)}
                   onDoubleClick={onSelectProject(uid)}
                 />
@@ -170,14 +186,13 @@ export default (props: Props) => {
   );
 };
 
-function getErrorName(errors: ReturnType<typeof validate>) {
-
-  if(errors?.name?.[0]?.type === 'required') {
-    return 'Не заполнено название';
+function getErrorName(errors: ReturnType<typeof validationScheme.validate>) {
+  if (errors?.project?.name?.[0]?.type === "required") {
+    return "Не заполнено название";
   }
 
-  if(errors?.[0].type === 'notUniqueName') {
-    return 'Такое название уже существует'
+  if (errors?.[0].type === "notUniqueName") {
+    return "Такое название уже существует";
   }
 
   return undefined;

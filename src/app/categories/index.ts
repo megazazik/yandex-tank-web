@@ -19,51 +19,47 @@ export default categories
   })
   .actionCreators({
     add: thunk(
-      actions => (
+      (
         storage: IStorage,
         category: Omit<ICategory, "id">
       ) => async dispatch => {
         try {
-          dispatch(actions.setProcessing(true));
+          dispatch.setProcessing(true);
           await storage.setCategory({ ...category, id: uuid() });
           const categories = await storage.getCategories();
-          dispatch(actions.setItems(categories));
+          dispatch.setItems(categories);
         } finally {
-          dispatch(actions.setProcessing(false));
+          dispatch.setProcessing(false);
         }
       }
     ),
-    edit: thunk(
-      actions => (storage: IStorage, category: ICategory) => async dispatch => {
-        try {
-          dispatch(actions.setProcessing(true));
-          await storage.setCategory(category);
-          const categories = await storage.getCategories();
-          dispatch(actions.setItems(categories));
-        } finally {
-          dispatch(actions.setProcessing(false));
-        }
-      }
-    ),
-    load: thunk(actions => (storage: IStorage) => async dispatch => {
+    edit: thunk((storage: IStorage, category: ICategory) => async dispatch => {
       try {
-        dispatch(actions.setProcessing(true));
+        dispatch.setProcessing(true);
+        await storage.setCategory(category);
         const categories = await storage.getCategories();
-        dispatch(actions.setItems(categories));
+        dispatch.setItems(categories);
       } finally {
-        dispatch(actions.setProcessing(false));
+        dispatch.setProcessing(false);
       }
     }),
-    remove: thunk(
-      actions => (storage: IStorage, id: string) => async dispatch => {
-        try {
-          dispatch(actions.setProcessing(true));
-          await storage.deleteCategory(id);
-          const categories = await storage.getCategories();
-          dispatch(actions.setItems(categories));
-        } finally {
-          dispatch(actions.setProcessing(false));
-        }
+    load: thunk((storage: IStorage) => async dispatch => {
+      try {
+        dispatch.setProcessing(true);
+        const categories = await storage.getCategories();
+        dispatch.setItems(categories);
+      } finally {
+        dispatch.setProcessing(false);
       }
-    )
+    }),
+    remove: thunk((storage: IStorage, id: string) => async dispatch => {
+      try {
+        dispatch.setProcessing(true);
+        await storage.deleteCategory(id);
+        const categories = await storage.getCategories();
+        dispatch.setItems(categories);
+      } finally {
+        dispatch.setProcessing(false);
+      }
+    })
   });

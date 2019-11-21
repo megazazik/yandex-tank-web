@@ -15,8 +15,8 @@ COPY package.json /app
 COPY package-lock.json /app
 RUN npm install
 COPY . /app
-RUN npm run build
+RUN npm run prod build
 
 EXPOSE 4000
 
-ENTRYPOINT ["npm","start"]
+ENTRYPOINT ["npm","run", "prod", "start"]

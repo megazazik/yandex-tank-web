@@ -1,21 +1,15 @@
 import categoryValidation from "../category/validate";
 import { ICategory } from "../category";
+import { init } from "@megazazik/validate";
 
-const validation = categoryValidation.fullObjectRules({
-  notUniqueName: () => false
-});
-
-export default (category: ICategory, categories: ICategory[]) => {
-  return (
-    validation.validate(category) || isUniqueNameValidate(category, categories)
-  );
-};
-
-function isUniqueNameValidate(
-  category: ICategory,
-  categories: ICategory[]
-): ReturnType<typeof validation.validate> {
-  return categories.some(c => c.name === category.name)
-    ? [{ type: "notUniqueName" }]
-    : null;
+export interface ICreateCategoryValidationState {
+  category: ICategory;
+  categories: ICategory[];
 }
+
+export default init<ICreateCategoryValidationState>()
+  .rules({ category: categoryValidation })
+  .fullObjectRules({
+    notUniqueName: ({ categories, category }) =>
+      categories.some(c => c.name === category.name && c.id !== category.id)
+  });

@@ -55,5 +55,9 @@ export default ({ path }: IParams) => {
     res.json({ status: "ok" });
   });
 
+  router.post("/test/run", async (req, res) => {
+    throw new Error("Not implemented yet");
+  });
+
   return router;
 };

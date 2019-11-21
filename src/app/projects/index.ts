@@ -19,51 +19,44 @@ export default itemsState
   })
   .actionCreators({
     add: thunk(
-      actions => (
-        storage: IStorage,
-        project: Omit<IProject, "id">
-      ) => async dispatch => {
+      (storage: IStorage, project: Omit<IProject, "id">) => async dispatch => {
         try {
-          dispatch(actions.setProcessing(true));
+          dispatch.setProcessing(true);
           await storage.setProject({ ...project, id: uuid() });
           const projects = await storage.getProjects();
-          dispatch(actions.setItems(projects));
+          dispatch.setItems(projects);
         } finally {
-          dispatch(actions.setProcessing(false));
+          dispatch.setProcessing(false);
         }
       }
     ),
-    edit: thunk(
-      actions => (storage: IStorage, project: IProject) => async dispatch => {
-        try {
-          dispatch(actions.setProcessing(true));
-          await storage.setProject(project);
-          const projects = await storage.getProjects();
-          dispatch(actions.setItems(projects));
-        } finally {
-          dispatch(actions.setProcessing(false));
-        }
-      }
-    ),
-    load: thunk(actions => (storage: IStorage) => async dispatch => {
+    edit: thunk((storage: IStorage, project: IProject) => async dispatch => {
       try {
-        dispatch(actions.setProcessing(true));
+        dispatch.setProcessing(true);
+        await storage.setProject(project);
         const projects = await storage.getProjects();
-        dispatch(actions.setItems(projects));
+        dispatch.setItems(projects);
       } finally {
-        dispatch(actions.setProcessing(false));
+        dispatch.setProcessing(false);
       }
     }),
-    remove: thunk(
-      actions => (storage: IStorage, id: string) => async dispatch => {
-        try {
-          dispatch(actions.setProcessing(true));
-          await storage.deleteProject(id);
-          const projects = await storage.getProjects();
-          dispatch(actions.setItems(projects));
-        } finally {
-          dispatch(actions.setProcessing(false));
-        }
+    load: thunk((storage: IStorage) => async dispatch => {
+      try {
+        dispatch.setProcessing(true);
+        const projects = await storage.getProjects();
+        dispatch.setItems(projects);
+      } finally {
+        dispatch.setProcessing(false);
       }
-    )
+    }),
+    remove: thunk((storage: IStorage, id: string) => async dispatch => {
+      try {
+        dispatch.setProcessing(true);
+        await storage.deleteProject(id);
+        const projects = await storage.getProjects();
+        dispatch.setItems(projects);
+      } finally {
+        dispatch.setProcessing(false);
+      }
+    })
   });

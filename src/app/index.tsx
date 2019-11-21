@@ -26,6 +26,7 @@ export default () => {
 
   store.dispatch(state.actions.categories.load(storage) as any);
   store.dispatch(state.actions.projects.load(storage) as any);
+  store.dispatch(state.actions.tests.load(storage) as any);
 
   render(
     <Provider store={store}>

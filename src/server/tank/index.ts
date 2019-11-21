@@ -3,13 +3,10 @@ import { join } from "path";
 
 export default () =>
   new Promise(resolve => {
-    const child = spawn(
-      "yandex-tank",
-      ["-c", join(__dirname, "../../../", "load.yaml")],
-      {
-        cwd: "/var/loadtest"
-      }
-    );
+    const configDir = join(__dirname, "../../../run-tank-config");
+    const child = spawn("yandex-tank", ["-c", join(configDir, "load.yaml")], {
+      cwd: "/var/loadtest"
+    });
 
     child.stdout.on("data", chunk => {
       console.log(chunk.toString());

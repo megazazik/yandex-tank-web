@@ -10,7 +10,7 @@
     "build-client": "megazazik-build -c ./config/webpack.config.js",
     "build-server": "tsc -P tsconfig.server.json",
     "build-image": "docker build --rm -t yandex-tank-web --build-arg IMAGE=my-tank .",
-    "docker": "docker run -v $(pwd)/tank:/var/loadtest -p 5000:4000 -it yandex-tank-web",
+    "docker": "docker run -v $(pwd)/.storage:/app/.storage -v $(pwd)/tank:/var/loadtest -p 5000:4000 -it yandex-tank-web",
     "test": "sh default -d src/**/*.spec.* -c tape",
     "tape": "ts-node -P tsconfig.tests.json node_modules/tape/bin/tape",
     "test-w": "nodemon -e js,jsx,ts,tsx,json --exec npm run test",
@@ -44,6 +44,7 @@
     "babel-loader": "^8.0.6",
     "concurrently": "^4.1.2",
     "nodemon": "^1.19.4",
+    "prettier": "^1.19.1",
     "sinon": "^7.5.0",
     "tape": "^4.11.0",
     "ts-node": "^8.4.1",
@@ -68,6 +69,7 @@
     "redux": "^4.0.4",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "yaml": "^1.7.2"
   }
 }

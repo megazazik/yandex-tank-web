@@ -1,15 +1,15 @@
+import { bindActionCreators } from "encaps";
+
+type Dispatch = { (action: any): void };
+
 export default function createThunk<A extends {}, S, Args extends any[]>(
-  thunkBuilder: (
-    actions: A
-  ) => (
-    ...args: Args
-  ) => (dispatch: (action: any) => void, getState: () => S) => void
+  thunk: (...args: Args) => (dispatch: Dispatch & A, getState: () => S) => void
 ) {
   return (actions: A, getComponentState: (fullState: any) => S) => (
     ...args: Args
   ) => (dispatch: (action: any) => void, getState: () => any) => {
-    thunkBuilder(actions)(...args)(dispatch, () =>
-      getComponentState(getState())
-    );
+    const dispatchActions: any = (a: any) => dispatch(a);
+    Object.assign(dispatchActions, bindActionCreators(actions, dispatch));
+    thunk(...args)(dispatchActions, () => getComponentState(getState()));
   };
 }
