@@ -1,9 +1,11 @@
-import { IStorage } from "../interface";
 import { ICategory } from "../../category";
+import { ICategoriesService } from "../../categories/service";
 import { IProject } from "../../project";
+import { IProjectsService } from "../../projects/service";
 import { ITest } from "../../test";
+import { ITestsService } from "../../tests/service";
 
-const storage: IStorage = {
+const service: ICategoriesService & IProjectsService & ITestsService = {
   getCategories() {
     return fetch("/api/categories").then(res => {
       if (res.ok) {
@@ -56,20 +58,30 @@ const storage: IStorage = {
       throw new Error();
     });
   },
-  async setTest(test: ITest) {
-    await fetch("/api/test", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(test)
-    });
-  },
-  async deleteTest(id: string) {
-    await fetch(`/api/test/${id}`, {
-      method: "DELETE"
-    });
+  async runTest(test: Pick<ITest, "projectId" | "phantomConfig">) {
+    try {
+      const res = await fetch("/api/test/run", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(test)
+      });
+      if (!res.ok) {
+        return false;
+      }
+
+      const result = await res.json();
+
+      if (result.status === "ok") {
+        return true;
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
   }
 };
 
-export default storage;
+export default service;

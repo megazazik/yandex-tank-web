@@ -1,6 +1,5 @@
 import { bindActionCreators } from "encaps";
-
-type Dispatch = { (action: any): void };
+import { Dispatch } from "../dispatch";
 
 export default function createThunk<A extends {}, S, Args extends any[]>(
   thunk: (...args: Args) => (dispatch: Dispatch & A, getState: () => S) => void

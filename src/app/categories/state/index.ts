@@ -3,8 +3,8 @@ import { createMap } from "encaps";
 
 const categoriesModel = createMap(category);
 
-type ICategorieState = ReturnType<typeof categoriesModel.reducer>;
+type ICategoriesState = ReturnType<typeof categoriesModel.reducer>;
 
-export { ICategorieState };
+export { ICategoriesState };
 
 export default categoriesModel;

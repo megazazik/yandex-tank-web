@@ -5,12 +5,10 @@ export interface ITest {
   id: string;
   projectId: string;
   phantomConfig: string;
-  status: "in-progress" | "complete";
 }
 
 export default build()
   .initState<ITest>(() => ({
-    status: "in-progress",
     date: null,
     id: null,
     projectId: null,

@@ -1,9 +1,9 @@
 import { IAction } from "encaps";
 import { ICategory } from "../category";
-import categories, { ICategorieState } from "./state";
+import categories, { ICategoriesState } from "./state";
 import uuid from "uuid/v4";
 import thunk from "../../utils/thunk";
-import { IStorage } from "../storage/interface";
+import { ICategoriesService } from "./service";
 
 export default categories
   .initState(state => ({ ...state, isProcesssing: false }))
@@ -12,7 +12,7 @@ export default categories
       ...state,
       isProcesssing: payload
     }),
-    setItems: (state, { payload }: IAction<ICategorieState>) => ({
+    setItems: (state, { payload }: IAction<ICategoriesState>) => ({
       ...state,
       ...payload
     })
@@ -20,46 +20,50 @@ export default categories
   .actionCreators({
     add: thunk(
       (
-        storage: IStorage,
+        service: ICategoriesService,
         category: Omit<ICategory, "id">
       ) => async dispatch => {
         try {
           dispatch.setProcessing(true);
-          await storage.setCategory({ ...category, id: uuid() });
-          const categories = await storage.getCategories();
+          await service.setCategory({ ...category, id: uuid() });
+          const categories = await service.getCategories();
           dispatch.setItems(categories);
         } finally {
           dispatch.setProcessing(false);
         }
       }
     ),
-    edit: thunk((storage: IStorage, category: ICategory) => async dispatch => {
+    edit: thunk(
+      (service: ICategoriesService, category: ICategory) => async dispatch => {
+        try {
+          dispatch.setProcessing(true);
+          await service.setCategory(category);
+          const categories = await service.getCategories();
+          dispatch.setItems(categories);
+        } finally {
+          dispatch.setProcessing(false);
+        }
+      }
+    ),
+    load: thunk((service: ICategoriesService) => async dispatch => {
       try {
         dispatch.setProcessing(true);
-        await storage.setCategory(category);
-        const categories = await storage.getCategories();
+        const categories = await service.getCategories();
         dispatch.setItems(categories);
       } finally {
         dispatch.setProcessing(false);
       }
     }),
-    load: thunk((storage: IStorage) => async dispatch => {
-      try {
-        dispatch.setProcessing(true);
-        const categories = await storage.getCategories();
-        dispatch.setItems(categories);
-      } finally {
-        dispatch.setProcessing(false);
+    remove: thunk(
+      (service: ICategoriesService, id: string) => async dispatch => {
+        try {
+          dispatch.setProcessing(true);
+          await service.deleteCategory(id);
+          const categories = await service.getCategories();
+          dispatch.setItems(categories);
+        } finally {
+          dispatch.setProcessing(false);
+        }
       }
-    }),
-    remove: thunk((storage: IStorage, id: string) => async dispatch => {
-      try {
-        dispatch.setProcessing(true);
-        await storage.deleteCategory(id);
-        const categories = await storage.getCategories();
-        dispatch.setItems(categories);
-      } finally {
-        dispatch.setProcessing(false);
-      }
-    })
+    )
   });

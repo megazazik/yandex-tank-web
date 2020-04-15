@@ -84,7 +84,7 @@ export default (props: Props) => {
     <>
       <div className="row mb-3">
         <div className="col-12">
-          <h3>
+          <h3 className="">
             Категории{" "}
             {props.categories.isProcesssing && (
               <div

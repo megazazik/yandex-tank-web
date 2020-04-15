@@ -1,6 +1,6 @@
 import * as React from "react";
 import Modal from "../../../utils/modal";
-import projects from "..";
+import { ViewActions, ViewProps } from "../adapter";
 import ProjectEditForm from "../../project/view";
 import { reducer, actions } from "./reducer";
 import { bindActionCreators } from "encaps";
@@ -14,15 +14,13 @@ import { ICategory } from "../../category";
 
 export type Props = {
   category: ICategory;
-  projects: ReturnType<typeof projects.reducer>;
-  addProject: (project: { name: string }) => void;
-  deleteProject: (id: string) => void;
-  editProject: (project: IProject) => void;
+  projects: ViewProps;
+  actions: ViewActions;
   onSelectProject: (project: IProject) => void;
   onBackButtonClick: () => void;
 };
 
-export default (props: Props) => {
+const ProjectsView: React.FunctionComponent<Props> = props => {
   const [state, dispatch] = React.useReducer(reducer, undefined, reducer);
 
   const boundAction = React.useMemo(
@@ -41,12 +39,12 @@ export default (props: Props) => {
     } else {
       boundAction.closePopup();
       if (state.isNewProject) {
-        props.addProject(state.project);
+        props.actions.add(state.project);
       } else {
-        props.editProject(state.project);
+        props.actions.edit(state.project);
       }
     }
-  }, [state.project, props.addProject]);
+  }, [state.project, props.actions]);
 
   const onCreateProjectClick = React.useCallback(() => {
     boundAction.createProject(props.category.id);
@@ -69,7 +67,7 @@ export default (props: Props) => {
 
   const onDeleteProject = useEventCallback(() => {
     if (state.selectedProject) {
-      props.deleteProject(state.selectedProject);
+      props.actions.remove(state.selectedProject);
     }
   });
 
@@ -197,3 +195,5 @@ function getErrorName(errors: ReturnType<typeof validationScheme.validate>) {
 
   return undefined;
 }
+
+export default (ProjectsView as any) as React.ComponentClass<Props>;

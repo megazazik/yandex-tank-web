@@ -1,5 +1,7 @@
-import { Router, json } from "express";
+import { Router } from "express";
+import uuid from "uuid/v4";
 import FileStorage from "../../app/storage/file";
+import { ITest } from "app/test";
 
 export interface IParams {
   path: string;
@@ -56,7 +58,20 @@ export default ({ path }: IParams) => {
   });
 
   router.post("/test/run", async (req, res) => {
-    throw new Error("Not implemented yet");
+    const body: Pick<ITest, "projectId" | "phantomConfig"> = req.body;
+    if (!body.phantomConfig || !body.projectId) {
+      res.sendStatus(400);
+      res.json({ error: "Incorrect data" });
+      return;
+    }
+
+    await storage.setTest({
+      ...body,
+      date: new Date().getTime(),
+      id: uuid()
+    });
+
+    res.json({ status: "ok" });
   });
 
   return router;

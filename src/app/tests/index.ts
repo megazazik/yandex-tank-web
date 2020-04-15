@@ -1,50 +1,50 @@
 import { ITest } from "../test";
 import tests, { ITestsState } from "./state";
-import uuid from "uuid/v4";
 import thunk from "../../utils/thunk";
-import { IStorage } from "../storage/interface";
+import { ITestsService } from "./service";
 
 export interface IState extends ITestsState {
   isProcesssing: boolean;
   failOnRun: boolean;
+  runningTest?: string;
 }
 
 export default tests
   .initState<IState>(state => ({
     ...state,
     isProcesssing: false,
-    failOnRun: false
+    failOnRun: false,
+    runningTest: null
   }))
   .handlers({
     setProcessing: "isProcesssing",
     setItems: "items",
-    setFailOnRun: "failOnRun"
+    setFailOnRun: "failOnRun",
+    setRunningTest: "runningTest"
   })
   .actionCreators({
     runTest: thunk(
       (
-        storage: IStorage,
-        runTest: (test: ITest) => Promise<boolean>,
-        test: Omit<ITest, "id">
+        service: ITestsService,
+        test: Pick<ITest, "phantomConfig" | "projectId">
       ) => async dispatch => {
         try {
           dispatch.setProcessing(true);
-          const fail = await runTest({ ...test, id: uuid() });
-          if (fail) {
-            dispatch.setFailOnRun(true);
-          } else {
-            const tests = await storage.getTests();
-            dispatch.setItems(tests.items);
-          }
+          const success = await service.runTest(test);
+          dispatch.setFailOnRun(success);
+          const tests = await service.getTests();
+          dispatch.setItems(tests.items);
+        } catch {
+          dispatch.setFailOnRun(true);
         } finally {
           dispatch.setProcessing(false);
         }
       }
     ),
-    load: thunk((storage: IStorage) => async dispatch => {
+    load: thunk((service: ITestsService) => async dispatch => {
       try {
         dispatch.setProcessing(true);
-        const tests = await storage.getTests();
+        const tests = await service.getTests();
         dispatch.setItems(tests.items);
       } finally {
         dispatch.setProcessing(false);
